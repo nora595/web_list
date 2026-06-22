@@ -39,37 +39,6 @@ img { display: block; max-width: 100%; }
   padding: 0 24px;
 }
 
-/* Demo toolbar */
-.demo-toolbar {
-  position: fixed;
-  top: 12px;
-  right: 12px;
-  z-index: 999;
-  display: flex;
-  gap: 8px;
-  background: rgba(43, 49, 54, 0.92);
-  padding: 8px 10px;
-  border-radius: 10px;
-  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.2);
-}
-
-.demo-toolbar a,
-.demo-toolbar button {
-  border: none;
-  background: rgba(255, 255, 255, 0.12);
-  color: #fff;
-  padding: 6px 12px;
-  border-radius: 6px;
-  cursor: pointer;
-  font-size: 12px;
-}
-
-.demo-toolbar a.active,
-.demo-toolbar button.active {
-  background: var(--primary);
-  color: #fff;
-}
-
 /* Top bar */
 .topbar {
   background: var(--primary);
@@ -78,33 +47,34 @@ img { display: block; max-width: 100%; }
 }
 
 .topbar-inner {
-  display: grid;
-  grid-template-columns: 1fr auto 1fr;
+  display: flex;
   align-items: center;
+  justify-content: space-between;
   min-height: 36px;
   gap: 16px;
 }
 
-.topbar-left { justify-self: start; }
-.topbar-center { justify-self: center; text-align: center; white-space: nowrap; }
-.topbar-right { justify-self: end; }
+.topbar-left { flex-shrink: 0; }
 
-.user-greet { font-weight: 500; }
-.icon-exit { opacity: 0.85; margin-left: 4px; cursor: pointer; }
-.service-info { opacity: 0.95; }
-
-.topbar-tools {
+.topbar-right {
   display: flex;
   align-items: center;
   gap: 10px;
+  margin-left: auto;
+  flex-wrap: wrap;
+  justify-content: flex-end;
 }
 
-.topbar-tools .tool {
+.user-greet { font-weight: 500; }
+.icon-exit { opacity: 0.85; margin-left: 4px; cursor: pointer; }
+.service-info { opacity: 0.95; white-space: nowrap; }
+
+.topbar-right .tool {
   border: none;
   background: transparent;
   color: #fff;
   cursor: pointer;
-  padding: 4px 6px;
+  padding: 4px 2px;
   font-size: 12px;
 }
 
@@ -115,12 +85,16 @@ img { display: block; max-width: 100%; }
 .header {
   background: #fff;
   border-bottom: 1px solid var(--line);
+  position: relative;
+  z-index: 100;
 }
+
+.header.menu-open { border-bottom-color: transparent; }
 
 .header-inner {
   display: flex;
   align-items: center;
-  gap: 32px;
+  gap: 20px;
   min-height: 64px;
 }
 
@@ -147,9 +121,8 @@ img { display: block; max-width: 100%; }
 .main-nav {
   display: flex;
   align-items: center;
-  gap: 28px;
-  flex: 1;
-  justify-content: center;
+  gap: 24px;
+  flex-shrink: 0;
 }
 
 .nav-link {
@@ -157,6 +130,9 @@ img { display: block; max-width: 100%; }
   padding: 8px 0;
   color: #4a5560;
   font-size: 15px;
+  border: none;
+  background: transparent;
+  cursor: pointer;
 }
 
 .nav-link.active {
@@ -175,6 +151,7 @@ img { display: block; max-width: 100%; }
   border-radius: 2px;
 }
 
+.nav-link.open::after { display: block; }
 .nav-link .arrow { font-size: 10px; margin-left: 2px; }
 
 .search-box {
@@ -183,8 +160,9 @@ img { display: block; max-width: 100%; }
   border: 1px solid var(--line);
   border-radius: 999px;
   overflow: hidden;
-  width: 220px;
+  width: 240px;
   flex-shrink: 0;
+  margin-left: auto;
 }
 
 .search-box input {
@@ -203,11 +181,112 @@ img { display: block; max-width: 100%; }
   color: var(--muted);
 }
 
+/* Mega menu */
+.mega-menu {
+  border-top: 1px solid var(--line);
+  background: #fff;
+  box-shadow: 0 12px 32px rgba(20, 45, 58, 0.08);
+}
+
+.mega-inner {
+  display: grid;
+  grid-template-columns: 1fr 220px;
+  gap: 0;
+  padding: 28px 24px 32px;
+}
+
+.mega-columns {
+  display: grid;
+  grid-template-columns: repeat(6, 1fr);
+  gap: 20px 16px;
+}
+
+.mega-col-title {
+  font-size: 14px;
+  font-weight: 700;
+  color: var(--text);
+  margin-bottom: 12px;
+}
+
+.mega-col-title.underline {
+  text-decoration: underline;
+  text-underline-offset: 4px;
+}
+
+.mega-group { margin-bottom: 12px; }
+
+.mega-group-title {
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--text);
+  margin-bottom: 6px;
+}
+
+.mega-group-title.muted,
+.mega-link.muted {
+  color: var(--muted);
+  font-weight: 400;
+}
+
+.mega-link {
+  display: block;
+  font-size: 13px;
+  color: var(--text);
+  line-height: 1.65;
+  cursor: pointer;
+}
+
+.mega-link:hover { color: var(--primary-dark); }
+
+.mega-featured {
+  border-left: 1px solid var(--line);
+  padding-left: 20px;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.mega-featured-item {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 8px 10px;
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  font-size: 13px;
+  color: var(--text);
+  cursor: pointer;
+  transition: border-color 0.15s;
+}
+
+.mega-featured-item:hover { border-color: var(--primary); }
+
+.mega-featured-item img {
+  width: 40px;
+  height: 40px;
+  border-radius: 6px;
+  object-fit: cover;
+  flex-shrink: 0;
+}
+
 /* Category bar */
 .category-bar {
   background: #fff;
   border-bottom: 1px solid var(--line);
   padding: 12px 0;
+}
+
+.category-wrap {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.cat-fixed {
+  flex-shrink: 0;
+  z-index: 2;
+  background: #fff;
+  box-shadow: 8px 0 12px -8px rgba(0, 0, 0, 0.08);
 }
 
 .category-scroll {
@@ -216,6 +295,8 @@ img { display: block; max-width: 100%; }
   gap: 8px;
   overflow-x: auto;
   scrollbar-width: none;
+  flex: 1;
+  min-width: 0;
 }
 
 .category-scroll::-webkit-scrollbar { display: none; }
@@ -250,9 +331,8 @@ img { display: block; max-width: 100%; }
 }
 
 .cat-arrow {
-  border: none;
-  background: #fff;
   border: 1px solid var(--line);
+  background: #fff;
   width: 32px;
   height: 32px;
   border-radius: 50%;
@@ -265,161 +345,17 @@ img { display: block; max-width: 100%; }
   justify-content: center;
 }
 
+.cat-arrow.hidden { visibility: hidden; pointer-events: none; }
+
 /* Products layout */
-.page-products {
-  padding: 24px 0 48px;
-}
+.page-products { padding: 24px 0 48px; }
 
-.page-products.with-filter {
-  display: grid;
-  grid-template-columns: 240px 1fr;
-  gap: 24px;
-}
-
-.filter-panel {
-  background: #fff;
-  border-radius: 12px;
-  padding: 16px;
-  box-shadow: var(--shadow);
-  height: fit-content;
-}
-
-.filter-head {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  font-weight: 600;
-  margin-bottom: 16px;
-  padding-bottom: 12px;
-  border-bottom: 1px solid var(--line);
-}
-
-.filter-reset {
-  border: none;
-  background: transparent;
-  cursor: pointer;
-  color: var(--muted);
-  font-size: 16px;
-}
-
-.filter-block { margin-bottom: 18px; }
-.filter-block h4 {
-  font-size: 13px;
-  margin-bottom: 10px;
-  color: var(--text);
-  font-weight: 600;
-}
-
-.chip-group { display: flex; flex-wrap: wrap; gap: 6px; }
-
-.chip {
-  border: 1px solid var(--line);
-  background: #fff;
-  padding: 5px 10px;
-  border-radius: 6px;
-  font-size: 12px;
-  cursor: pointer;
-  color: var(--muted);
-}
-
-.chip.active {
-  border-color: var(--primary);
-  background: var(--primary-soft);
-  color: var(--primary-dark);
-}
-
-.range-wrap { margin-bottom: 10px; }
-
-.range-bar {
-  height: 4px;
-  background: var(--line);
-  border-radius: 2px;
-  position: relative;
-  margin: 16px 0 12px;
-}
-
-.range-fill {
-  position: absolute;
-  left: 0;
-  top: 0;
-  height: 100%;
-  width: 55%;
-  background: var(--primary);
-  border-radius: 2px;
-}
-
-.range-knob {
-  position: absolute;
-  top: 50%;
-  width: 14px;
-  height: 14px;
-  border-radius: 50%;
-  background: var(--primary);
-  border: 2px solid #fff;
-  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.15);
-  transform: translate(-50%, -50%);
-}
-
-.range-knob.min { left: 0; }
-.range-knob.max { left: 55%; }
-
-.range-labels {
-  display: flex;
-  justify-content: space-between;
-  font-size: 12px;
-  color: var(--muted);
-}
-
-.check {
-  display: flex;
-  align-items: center;
-  gap: 8px;
-  font-size: 13px;
-  margin-bottom: 8px;
-  cursor: pointer;
-  color: #4a5560;
-}
-
-.check input { accent-color: var(--primary); }
-
-.sort-bar {
-  display: flex;
-  align-items: center;
-  gap: 24px;
-  margin-bottom: 20px;
-  padding-bottom: 12px;
-  border-bottom: 1px solid var(--line);
-}
-
-.sort-item {
-  border: none;
-  background: transparent;
-  cursor: pointer;
-  color: var(--muted);
-  font-size: 13px;
-  display: inline-flex;
-  align-items: center;
-  gap: 4px;
-}
-
-.sort-item.active {
-  color: var(--text);
-  font-weight: 600;
-}
-
-.sort-item .arrow-up {
-  font-size: 11px;
-  color: var(--primary-dark);
-}
-
-/* Product grid */
 .product-grid {
   display: grid;
   gap: 20px;
 }
 
 .product-grid.cols-5 { grid-template-columns: repeat(5, 1fr); }
-.product-grid.cols-4 { grid-template-columns: repeat(4, 1fr); }
 
 .product-card {
   background: #fff;
@@ -523,7 +459,6 @@ img { display: block; max-width: 100%; }
   gap: 2px;
 }
 
-/* Pagination */
 .pagination {
   display: flex;
   align-items: center;
@@ -549,12 +484,8 @@ img { display: block; max-width: 100%; }
   color: #fff;
 }
 
-.page-ellipsis {
-  padding: 0 8px;
-  color: var(--muted);
-}
+.page-ellipsis { padding: 0 8px; color: var(--muted); }
 
-/* Footer */
 .footer {
   background: var(--footer-bg);
   color: var(--footer-text);
@@ -617,14 +548,21 @@ img { display: block; max-width: 100%; }
 
 @media (max-width: 1200px) {
   .product-grid.cols-5 { grid-template-columns: repeat(4, 1fr); }
-  .product-grid.cols-4 { grid-template-columns: repeat(3, 1fr); }
+  .mega-columns { grid-template-columns: repeat(3, 1fr); }
 }
 
 @media (max-width: 900px) {
-  .page-products.with-filter { grid-template-columns: 1fr; }
-  .product-grid.cols-5,
-  .product-grid.cols-4 { grid-template-columns: repeat(2, 1fr); }
+  .product-grid.cols-5 { grid-template-columns: repeat(2, 1fr); }
   .footer-grid { grid-template-columns: 1fr 1fr; }
+  .mega-inner { grid-template-columns: 1fr; }
+  .mega-featured {
+    border-left: none;
+    border-top: 1px solid var(--line);
+    padding-left: 0;
+    padding-top: 16px;
+    flex-direction: row;
+    flex-wrap: wrap;
+  }
 }
 </style>
 </head>
@@ -661,6 +599,71 @@ img { display: block; max-width: 100%; }
     { id: 'study', name: 'Study', img: IMGS[9] },
   ];
 
+  const MEGA_MENU = [
+    {
+      title: 'Living Room',
+      groups: [
+        { links: ['Side Table', 'Recliner Sofa', 'Storage Cabinet', 'Entryway Cabinet', 'Shoe Cabinet', 'Other Storage Cabinet'] },
+        {
+          title: 'Fabric Sofa',
+          links: ['Single Sofa', 'Double Sofa', '3/4-Seater Sofa', 'Sofa Set'],
+          muted: true,
+        },
+      ],
+    },
+    {
+      title: 'Living Room',
+      groups: [
+        { links: ['Coffee Table', 'Bean Bag Sofa'] },
+        {
+          title: 'Solid Wood Sofa',
+          links: ['Single Sofa', 'Double Sofa', '3/4-Seater Sofa', 'Sofa Set'],
+          muted: true,
+        },
+        { links: ['Sofa Accessories'] },
+      ],
+    },
+    {
+      title: 'Living Room',
+      groups: [
+        { links: ['TV Stand', 'Sofa Bed'] },
+        {
+          title: 'Leather Sofa',
+          links: ['Single Sofa', 'Double Sofa', '3/4-Seater Sofa', 'Sofa Set'],
+          muted: true,
+        },
+      ],
+    },
+    {
+      title: 'Dining Room',
+      underline: true,
+      groups: [{ links: ['Dining Tables', 'Dining Cabinets', 'Dining Table Sets', 'Dining Chairs'] }],
+    },
+    {
+      title: 'Bedroom',
+      groups: [
+        { links: ['Dresser Stools', 'Night Stands', 'Chests of Drawers', 'Wardrobes', 'Dresser Sets', 'Dressers'] },
+        {
+          title: 'Beds',
+          links: ['Solid Wood Beds', 'Wood-panel Beds', 'Metal Beds', 'Bed Accessories', 'smart bed'],
+          muted: true,
+        },
+      ],
+    },
+    {
+      title: 'Study',
+      groups: [{ links: ['Office Sets', 'Bookcases', 'Desks', 'Office Chairs'] }],
+    },
+  ];
+
+  const MEGA_FEATURED = [
+    { name: 'New Arrivals', img: IMGS[1] },
+    { name: 'Bestsellers', img: IMGS[2] },
+    { name: 'Linsy Living', img: IMGS[3] },
+    { name: 'Kids Furniture', img: IMGS[5] },
+    { name: 'Inspire Series', img: IMGS[4] },
+  ];
+
   const PRODUCTS = Array.from({ length: 20 }, (_, i) => {
     const imgIdx = i % IMGS.length;
     return {
@@ -683,29 +686,25 @@ img { display: block; max-width: 100%; }
     };
   });
 
-  return { CATEGORIES, PRODUCTS };
+  return { CATEGORIES, PRODUCTS, MEGA_MENU, MEGA_FEATURED };
 })();
 
 (function () {
-  const { CATEGORIES, PRODUCTS } = window.BPS_LIST_DATA;
+  const { CATEGORIES, PRODUCTS, MEGA_MENU, MEGA_FEATURED } = window.BPS_LIST_DATA;
+
+  const ALL_CAT = CATEGORIES.find((c) => c.id === 'all');
+  const SCROLL_CATS = CATEGORIES.filter((c) => c.id !== 'all');
 
   const state = {
-    view: 'simple',
     category: 'all',
     page: 2,
-    sort: 'sales',
     favorites: new Set(PRODUCTS.filter((p) => p.favorited).map((p) => p.id)),
-    loggedIn: true,
+    productsOpen: false,
+    catShowLeft: false,
   };
 
   const $ = (sel, root = document) => root.querySelector(sel);
   const $$ = (sel, root = document) => Array.from(root.querySelectorAll(sel));
-
-  function parseView() {
-    const hash = location.hash.replace(/^#\/?/, '');
-    state.view = hash === 'filter' ? 'filter' : 'simple';
-    state.loggedIn = state.view === 'simple';
-  }
 
   function showToast(msg) {
     let el = $('#toast');
@@ -720,60 +719,80 @@ img { display: block; max-width: 100%; }
     setTimeout(() => el.classList.remove('show'), 2000);
   }
 
-  function renderToolbar() {
+  function renderTopbar() {
     return `
-      <div class="demo-toolbar">
-        <a href="#/simple" class="${state.view === 'simple' ? 'active' : ''}">Grid List</a>
-        <a href="#/filter" class="${state.view === 'filter' ? 'active' : ''}">Filter List</a>
+      <div class="topbar">
+        <div class="container topbar-inner">
+          <div class="topbar-left">
+            <span class="user-greet">Hi, Linsytest <span class="icon-exit" title="Logout">↗</span></span>
+          </div>
+          <div class="topbar-right">
+            <span class="service-info">Service call: 0757-81299039 &nbsp;|&nbsp; Service email: franchise@linsy.com</span>
+            <span class="sep">|</span>
+            <button class="tool" type="button">English ▾</button>
+            <span class="sep">|</span>
+            <button class="tool" type="button">USD ▾</button>
+            <span class="sep">|</span>
+            <span class="guide">Guide</span>
+          </div>
+        </div>
       </div>
     `;
   }
 
-  function renderTopbar() {
-    const greet = state.loggedIn
-      ? 'Hi, Linsytest <span class="icon-exit" title="Logout">↗</span>'
-      : 'Hi, Login/Register';
+  function renderMegaMenu() {
+    if (!state.productsOpen) return '';
     return `
-      <div class="topbar">
-        <div class="container topbar-inner">
-          <div class="topbar-left"><span class="user-greet">${greet}</span></div>
-          <div class="topbar-center">
-            <span class="service-info">Service call: 0757-81299039 &nbsp;|&nbsp; Service email: franchise@linsy.com</span>
+      <div class="mega-menu" id="megaMenu">
+        <div class="container mega-inner">
+          <div class="mega-columns">
+            ${MEGA_MENU.map((col) => `
+              <div class="mega-col">
+                <div class="mega-col-title ${col.underline ? 'underline' : ''}">${col.title}</div>
+                ${col.groups.map((g) => `
+                  <div class="mega-group">
+                    ${g.title ? `<div class="mega-group-title ${g.muted ? 'muted' : ''}">${g.title}</div>` : ''}
+                    ${g.links.map((link) => `<a class="mega-link ${g.muted ? 'muted' : ''}" href="#">${link}</a>`).join('')}
+                  </div>
+                `).join('')}
+              </div>
+            `).join('')}
           </div>
-          <div class="topbar-right">
-            <div class="topbar-tools">
-              <button class="tool" type="button">English ▾</button>
-              <span class="sep">|</span>
-              <button class="tool" type="button">USD ▾</button>
-              <span class="sep">|</span>
-              <span class="guide">Guide</span>
-            </div>
-          </div>
+          <aside class="mega-featured">
+            ${MEGA_FEATURED.map((f) => `
+              <a class="mega-featured-item" href="#">
+                <img src="${f.img}" alt="${f.name}" />
+                <span>${f.name}</span>
+              </a>
+            `).join('')}
+          </aside>
         </div>
       </div>
     `;
   }
 
   function renderHeader() {
-    const placeholder = state.view === 'filter' ? 'sofas' : 'Search';
     return `
-      <header class="header">
+      <header class="header ${state.productsOpen ? 'menu-open' : ''}">
         <div class="container header-inner">
           <div class="brand">
             <span class="brand-en">LINSY</span><span class="brand-cn">林氏</span>
           </div>
           <nav class="main-nav">
             <a class="nav-link" href="#">Home</a>
-            <a class="nav-link active" href="#">Products <span class="arrow">▼</span></a>
+            <button type="button" class="nav-link nav-products ${state.productsOpen ? 'active open' : 'active'}" data-action="toggle-products">
+              Products <span class="arrow">▼</span>
+            </button>
             <a class="nav-link" href="#">Wishlist</a>
             <a class="nav-link" href="#">PO</a>
             <a class="nav-link" href="#">Account</a>
           </nav>
           <div class="search-box">
-            <input type="text" placeholder="${placeholder}" />
+            <input type="text" placeholder="search" />
             <button type="button" class="search-btn" aria-label="Search">🔍</button>
           </div>
         </div>
+        ${renderMegaMenu()}
       </header>
     `;
   }
@@ -781,14 +800,21 @@ img { display: block; max-width: 100%; }
   function renderCategoryBar() {
     return `
       <div class="category-bar">
-        <div class="container category-scroll">
-          ${CATEGORIES.map((c) => `
-            <button type="button" class="cat-item ${state.category === c.id ? 'active' : ''}" data-cat="${c.id}">
-              <img class="cat-img" src="${c.img}" alt="${c.name}" />
-              <span>${c.name}</span>
-            </button>
-          `).join('')}
-          <button type="button" class="cat-arrow" aria-label="More categories">›</button>
+        <div class="container category-wrap">
+          <button type="button" class="cat-item cat-fixed ${state.category === 'all' ? 'active' : ''}" data-cat="all">
+            <img class="cat-img" src="${ALL_CAT.img}" alt="${ALL_CAT.name}" />
+            <span>${ALL_CAT.name}</span>
+          </button>
+          <button type="button" class="cat-arrow cat-arrow-left ${state.catShowLeft ? '' : 'hidden'}" data-cat-scroll="left" aria-label="Scroll categories left">‹</button>
+          <div class="category-scroll" id="catScroll">
+            ${SCROLL_CATS.map((c) => `
+              <button type="button" class="cat-item ${state.category === c.id ? 'active' : ''}" data-cat="${c.id}">
+                <img class="cat-img" src="${c.img}" alt="${c.name}" />
+                <span>${c.name}</span>
+              </button>
+            `).join('')}
+          </div>
+          <button type="button" class="cat-arrow cat-arrow-right" data-cat-scroll="right" aria-label="Scroll categories right">›</button>
         </div>
       </div>
     `;
@@ -819,97 +845,6 @@ img { display: block; max-width: 100%; }
           </div>
         </div>
       </article>
-    `;
-  }
-
-  function renderFilters() {
-    return `
-      <aside class="filter-panel">
-        <div class="filter-head">
-          <span>Filters</span>
-          <button type="button" class="filter-reset" title="Reset filters">🗑</button>
-        </div>
-        <section class="filter-block">
-          <h4>Label</h4>
-          <div class="chip-group">
-            <button type="button" class="chip active">New Arrivals</button>
-            <button type="button" class="chip">Bestsellers</button>
-          </div>
-        </section>
-        <section class="filter-block">
-          <h4>Price</h4>
-          <div class="range-wrap">
-            <div class="range-bar">
-              <div class="range-fill"></div>
-              <span class="range-knob min"></span>
-              <span class="range-knob max"></span>
-            </div>
-            <div class="range-labels"><span>$0</span><span>$5000</span></div>
-          </div>
-          <div class="chip-group">
-            <button type="button" class="chip active">Any</button>
-            <button type="button" class="chip">$0-$100</button>
-            <button type="button" class="chip">$101-$500</button>
-            <button type="button" class="chip">$501-$1000</button>
-          </div>
-        </section>
-        <section class="filter-block">
-          <h4>MOQ</h4>
-          <div class="chip-group">
-            <button type="button" class="chip active">Any</button>
-            <button type="button" class="chip">1 Piece</button>
-            <button type="button" class="chip">5 Pieces</button>
-            <button type="button" class="chip">10 Pieces</button>
-            <button type="button" class="chip">50 Pieces</button>
-            <button type="button" class="chip">100 Pieces</button>
-          </div>
-        </section>
-        <section class="filter-block">
-          <h4>Delivery Time</h4>
-          <div class="chip-group">
-            <button type="button" class="chip active">Any</button>
-            <button type="button" class="chip">7 days</button>
-            <button type="button" class="chip">15 days</button>
-            <button type="button" class="chip">30 days</button>
-            <button type="button" class="chip">Over 30 days</button>
-          </div>
-        </section>
-        <section class="filter-block">
-          <h4>Product Material</h4>
-          <label class="check"><input type="checkbox" checked /> Any Material</label>
-          <label class="check"><input type="checkbox" /> Wood</label>
-          <label class="check"><input type="checkbox" /> Metal</label>
-          <label class="check"><input type="checkbox" /> Fabric</label>
-          <label class="check"><input type="checkbox" /> Plastic</label>
-          <label class="check"><input type="checkbox" /> Glass</label>
-        </section>
-        <section class="filter-block">
-          <h4>Product Size</h4>
-          <label class="check"><input type="checkbox" checked /> Any Size</label>
-          <label class="check"><input type="checkbox" /> Small</label>
-          <label class="check"><input type="checkbox" /> Medium</label>
-          <label class="check"><input type="checkbox" /> Large</label>
-          <label class="check"><input type="checkbox" /> Custom Size</label>
-        </section>
-      </aside>
-    `;
-  }
-
-  function renderSortBar() {
-    const sorts = [
-      { id: 'date', label: 'Listing Date' },
-      { id: 'price', label: 'Price' },
-      { id: 'delivery', label: 'Delivery Time' },
-      { id: 'sales', label: 'Sales' },
-    ];
-    return `
-      <div class="sort-bar">
-        ${sorts.map((s) => `
-          <button type="button" class="sort-item ${state.sort === s.id ? 'active' : ''}" data-sort="${s.id}">
-            ${s.label}${state.sort === s.id ? ' <span class="arrow-up">↑</span>' : ''}
-          </button>
-        `).join('')}
-      </div>
     `;
   }
 
@@ -961,15 +896,11 @@ img { display: block; max-width: 100%; }
   }
 
   function renderMain() {
-    const isFilter = state.view === 'filter';
-    const cols = isFilter ? 'cols-4' : 'cols-5';
     return `
       ${renderCategoryBar()}
-      <div class="container page-products ${isFilter ? 'with-filter' : ''}">
-        ${isFilter ? renderFilters() : ''}
+      <div class="container page-products">
         <section class="product-area">
-          ${isFilter ? renderSortBar() : ''}
-          <div class="product-grid ${cols}">
+          <div class="product-grid cols-5">
             ${PRODUCTS.map(renderProductCard).join('')}
           </div>
           ${renderPagination()}
@@ -979,22 +910,72 @@ img { display: block; max-width: 100%; }
   }
 
   function render() {
-    parseView();
     $('#app').innerHTML = `
-      ${renderToolbar()}
       ${renderTopbar()}
       ${renderHeader()}
       <main>${renderMain()}</main>
       ${renderFooter()}
     `;
     bindEvents();
+    updateCatArrows();
+  }
+
+  function updateCatArrows() {
+    const scroller = $('#catScroll');
+    if (!scroller) return;
+    const first = scroller.firstElementChild;
+    const leftBtn = $('.cat-arrow-left');
+    if (!first || !leftBtn) return;
+
+    const scrollerRect = scroller.getBoundingClientRect();
+    const firstRect = first.getBoundingClientRect();
+    const hidden = firstRect.left < scrollerRect.left - 2;
+    state.catShowLeft = hidden || scroller.scrollLeft > 4;
+    leftBtn.classList.toggle('hidden', !state.catShowLeft);
   }
 
   function bindEvents() {
+    $$('[data-action="toggle-products"]').forEach((btn) => {
+      btn.addEventListener('click', (e) => {
+        e.stopPropagation();
+        state.productsOpen = !state.productsOpen;
+        render();
+      });
+    });
+
+    if (state.productsOpen) {
+      setTimeout(() => {
+        const closeMenu = (e) => {
+          const header = $('.header');
+          if (header && !header.contains(e.target)) {
+            state.productsOpen = false;
+            document.removeEventListener('click', closeMenu);
+            render();
+          }
+        };
+        document.addEventListener('click', closeMenu);
+      }, 0);
+    }
+
     $$('[data-cat]').forEach((btn) => {
       btn.addEventListener('click', () => {
         state.category = btn.dataset.cat;
         render();
+      });
+    });
+
+    const scroller = $('#catScroll');
+    if (scroller) {
+      scroller.addEventListener('scroll', updateCatArrows);
+    }
+
+    $$('[data-cat-scroll]').forEach((btn) => {
+      btn.addEventListener('click', () => {
+        const el = $('#catScroll');
+        if (!el) return;
+        const delta = btn.dataset.catScroll === 'left' ? -240 : 240;
+        el.scrollBy({ left: delta, behavior: 'smooth' });
+        setTimeout(updateCatArrows, 320);
       });
     });
 
@@ -1013,13 +994,6 @@ img { display: block; max-width: 100%; }
       });
     });
 
-    $$('[data-sort]').forEach((btn) => {
-      btn.addEventListener('click', () => {
-        state.sort = btn.dataset.sort;
-        render();
-      });
-    });
-
     $$('[data-page]').forEach((btn) => {
       btn.addEventListener('click', () => {
         const val = btn.dataset.page;
@@ -1030,29 +1004,30 @@ img { display: block; max-width: 100%; }
       });
     });
 
-    $$('.chip').forEach((chip) => {
-      chip.addEventListener('click', () => {
-        const group = chip.closest('.chip-group');
-        if (!group) return;
-        group.querySelectorAll('.chip').forEach((c) => c.classList.remove('active'));
-        chip.classList.add('active');
-      });
-    });
-
     $$('.product-card').forEach((card) => {
       card.addEventListener('click', () => showToast('Navigate to product detail'));
     });
+
+    $$('.mega-link, .mega-featured-item').forEach((link) => {
+      link.addEventListener('click', (e) => {
+        e.preventDefault();
+        state.productsOpen = false;
+        showToast(`Navigate to ${link.textContent.trim()}`);
+        render();
+      });
+    });
+
+    window.addEventListener('resize', updateCatArrows);
   }
+
   function boot() {
-    const root = document.getElementById('app');
-    if (!root) return;
-    window.addEventListener('hashchange', render);
     try { render(); }
     catch (err) {
-      root.innerHTML = '<pre style="padding:24px;color:#c0392b;white-space:pre-wrap;font:14px/1.5 sans-serif;">Demo failed to load:\n' + err.message + '</pre>';
-      console.error(err);
+      const root = document.getElementById('app');
+      if (root) root.innerHTML = `<pre style="padding:24px;color:#c0392b;">${err.message}</pre>`;
     }
   }
+
   if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', boot);
   else boot();
 })();

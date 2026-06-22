@@ -100,22 +100,24 @@ img { display: block; max-width: 100%; }
 
 .brand {
   display: flex;
-  align-items: baseline;
-  gap: 6px;
+  align-items: center;
+  gap: 10px;
   flex-shrink: 0;
 }
 
 .brand-en {
-  font-size: 26px;
+  font-size: 28px;
   font-weight: 800;
-  color: var(--primary-dark);
-  letter-spacing: 0.02em;
+  color: #0e6b62;
+  letter-spacing: 0.04em;
+  line-height: 1;
 }
 
 .brand-cn {
-  font-size: 14px;
-  color: var(--muted);
-  font-weight: 500;
+  font-size: 26px;
+  font-weight: 700;
+  color: #0e6b62;
+  line-height: 1;
 }
 
 .main-nav {
@@ -206,7 +208,11 @@ img { display: block; max-width: 100%; }
   font-weight: 700;
   color: var(--text);
   margin-bottom: 12px;
+  cursor: pointer;
+  display: inline-block;
 }
+
+.mega-col-title:hover { color: #0e6b62; }
 
 .mega-col-title.underline {
   text-decoration: underline;
@@ -657,12 +663,19 @@ img { display: block; max-width: 100%; }
   ];
 
   const MEGA_FEATURED = [
-    { name: 'New Arrivals', img: IMGS[1] },
-    { name: 'Bestsellers', img: IMGS[2] },
-    { name: 'Linsy Living', img: IMGS[3] },
-    { name: 'Kids Furniture', img: IMGS[5] },
-    { name: 'Inspire Series', img: IMGS[4] },
+    { name: 'New Arrivals', img: IMGS[1], catId: 'new' },
+    { name: 'Bestsellers', img: IMGS[2], catId: 'best' },
+    { name: 'Linsy Living', img: IMGS[3], catId: 'living' },
+    { name: 'Kids Furniture', img: IMGS[5], catId: 'kids' },
+    { name: 'Inspire Series', img: IMGS[4], catId: 'inspire' },
   ];
+
+  const MEGA_COL_CAT = {
+    'Living Room': 'livingroom',
+    'Dining Room': 'dining',
+    Bedroom: 'bedroom',
+    Study: 'study',
+  };
 
   const PRODUCTS = Array.from({ length: 20 }, (_, i) => {
     const imgIdx = i % IMGS.length;
@@ -686,11 +699,11 @@ img { display: block; max-width: 100%; }
     };
   });
 
-  return { CATEGORIES, PRODUCTS, MEGA_MENU, MEGA_FEATURED };
+  return { CATEGORIES, PRODUCTS, MEGA_MENU, MEGA_FEATURED, MEGA_COL_CAT };
 })();
 
 (function () {
-  const { CATEGORIES, PRODUCTS, MEGA_MENU, MEGA_FEATURED } = window.BPS_LIST_DATA;
+  const { CATEGORIES, PRODUCTS, MEGA_MENU, MEGA_FEATURED, MEGA_COL_CAT } = window.BPS_LIST_DATA;
 
   const ALL_CAT = CATEGORIES.find((c) => c.id === 'all');
   const SCROLL_CATS = CATEGORIES.filter((c) => c.id !== 'all');
@@ -706,8 +719,37 @@ img { display: block; max-width: 100%; }
   const $ = (sel, root = document) => root.querySelector(sel);
   const $$ = (sel, root = document) => Array.from(root.querySelectorAll(sel));
 
+  function findCategoryIdByName(name) {
+    const key = name.trim().toLowerCase();
+    const cat = CATEGORIES.find((c) => c.name.toLowerCase() === key);
+    return cat ? cat.id : null;
+  }
+
+  function syncTopCategory(catId) {
+    if (!catId || !CATEGORIES.some((c) => c.id === catId)) return false;
+    state.category = catId;
+    return true;
+  }
+
+  function scrollCategoryIntoView(catId) {
+    requestAnimationFrame(() => {
+      const btn = document.querySelector(`[data-cat="${catId}"]`);
+      if (!btn || catId === 'all') return;
+      btn.scrollIntoView({ behavior: 'smooth', inline: 'center', block: 'nearest' });
+      setTimeout(updateCatArrows, 350);
+    });
+  }
+
+  function closeMegaAndSync(catId, label) {
+    if (!syncTopCategory(catId)) return false;
+    state.productsOpen = false;
+    render();
+    scrollCategoryIntoView(catId);
+    showToast(`Linked to ${label}`);
+    return true;
+  }
+
   function showToast(msg) {
-    let el = $('#toast');
     if (!el) {
       el = document.createElement('div');
       el.id = 'toast';
@@ -748,11 +790,11 @@ img { display: block; max-width: 100%; }
           <div class="mega-columns">
             ${MEGA_MENU.map((col) => `
               <div class="mega-col">
-                <div class="mega-col-title ${col.underline ? 'underline' : ''}">${col.title}</div>
+                <button type="button" class="mega-col-title ${col.underline ? 'underline' : ''}" data-mega-cat="${MEGA_COL_CAT[col.title] || ''}">${col.title}</button>
                 ${col.groups.map((g) => `
                   <div class="mega-group">
                     ${g.title ? `<div class="mega-group-title ${g.muted ? 'muted' : ''}">${g.title}</div>` : ''}
-                    ${g.links.map((link) => `<a class="mega-link ${g.muted ? 'muted' : ''}" href="#">${link}</a>`).join('')}
+                    ${g.links.map((link) => `<a class="mega-link ${g.muted ? 'muted' : ''}" href="#" data-mega-link="${link}">${link}</a>`).join('')}
                   </div>
                 `).join('')}
               </div>
@@ -760,7 +802,7 @@ img { display: block; max-width: 100%; }
           </div>
           <aside class="mega-featured">
             ${MEGA_FEATURED.map((f) => `
-              <a class="mega-featured-item" href="#">
+              <a class="mega-featured-item" href="#" data-mega-cat="${f.catId}">
                 <img src="${f.img}" alt="${f.name}" />
                 <span>${f.name}</span>
               </a>
@@ -1008,16 +1050,42 @@ img { display: block; max-width: 100%; }
       card.addEventListener('click', () => showToast('Navigate to product detail'));
     });
 
-    $$('.mega-link, .mega-featured-item').forEach((link) => {
+    $$('.mega-col-title[data-mega-cat]').forEach((btn) => {
+      btn.addEventListener('click', (e) => {
+        e.preventDefault();
+        const catId = btn.dataset.megaCat;
+        if (catId) closeMegaAndSync(catId, btn.textContent.trim());
+      });
+    });
+
+    $$('.mega-featured-item[data-mega-cat]').forEach((link) => {
       link.addEventListener('click', (e) => {
         e.preventDefault();
+        const catId = link.dataset.megaCat;
+        const label = link.querySelector('span')?.textContent.trim() || '';
+        if (catId && closeMegaAndSync(catId, label)) return;
         state.productsOpen = false;
-        showToast(`Navigate to ${link.textContent.trim()}`);
+        showToast(`Navigate to ${label}`);
         render();
       });
     });
 
-    window.addEventListener('resize', updateCatArrows);
+    $$('.mega-link[data-mega-link]').forEach((link) => {
+      link.addEventListener('click', (e) => {
+        e.preventDefault();
+        const label = link.dataset.megaLink || link.textContent.trim();
+        const catId = findCategoryIdByName(label);
+        if (catId && closeMegaAndSync(catId, label)) return;
+        state.productsOpen = false;
+        showToast(`Navigate to ${label}`);
+        render();
+      });
+    });
+
+    if (!window.__bpsCatResize) {
+      window.__bpsCatResize = true;
+      window.addEventListener('resize', updateCatArrows);
+    }
   }
 
   function boot() {
